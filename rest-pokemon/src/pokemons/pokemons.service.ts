@@ -17,17 +17,23 @@ export class PokemonsService {
   ) {}
 
   create(createPokemonDto: CreatePokemonDto) {
-    //new Pokemon(data)
     const pokemon = this.pokemonRepo.create(createPokemonDto);
     return this.pokemonRepo.save(pokemon);
   }
 
-  // findAll() {
-  //   return `This action returns all pokemons`;
-  // }
+  async findAllDbByFilter(offset: number, limit: number) {
+    const pokemons = await this.pokemonRepo.find({
+      order: {
+        id: 'ASC',
+      },
+      skip: offset,
+      take: limit,
+    });
+    return pokemons;
+  }
 
-  async findByFilter(offset: number) {
-    const url = `https://pokeapi.co/api/v2/pokemon?limit=10&offset=${offset}`;
+  async findByFilter(offset: number, limit: number) {
+    const url = `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`;
     const pokemons = await this.httpService.get(url).pipe(
       map((axiosResponse: AxiosResponse) => {
         return axiosResponse.data.results;

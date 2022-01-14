@@ -12,6 +12,7 @@ import {
 import { PokemonsService } from './pokemons.service';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
+import { PaginationParams } from 'src/utils/paginationParams';
 
 @Controller('pokemons')
 export class PokemonsController {
@@ -22,14 +23,14 @@ export class PokemonsController {
     return this.pokemonsService.create(createPokemonDto);
   }
 
-  // @Get()
-  // findAll(@Query('limit') limit: number, @Query('offset') offset: number) {
-  //   return this.pokemonsService.findAll();
-  // }
+  @Get('db')
+  findAllDbByFilter(@Query() { offset = 0, limit = 10 }: PaginationParams) {
+    return this.pokemonsService.findAllDbByFilter(offset, limit);
+  }
 
   @Get()
-  findByFilter(@Query('offset') offset: number) {
-    return this.pokemonsService.findByFilter(offset);
+  findByFilter(@Query() { offset = 0, limit = 10 }: PaginationParams) {
+    return this.pokemonsService.findByFilter(offset, limit);
   }
 
   @Get(':id')
