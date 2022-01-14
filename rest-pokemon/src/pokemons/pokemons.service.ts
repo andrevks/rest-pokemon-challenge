@@ -1,18 +1,25 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { Observable, from } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import { map } from 'rxjs/operators';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
-import { stringify } from 'querystring';
+import { EntityNotFoundError, Repository } from 'typeorm';
+import { Pokemon } from './entities/pokemon.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class PokemonsService {
-  constructor(private httpService: HttpService) {}
+  constructor(
+    @InjectRepository(Pokemon)
+    private pokemonRepo: Repository<Pokemon>,
+    private httpService: HttpService,
+  ) {}
 
   create(createPokemonDto: CreatePokemonDto) {
-    return 'This action adds a new pokemon';
+    //new Pokemon(data)
+    const pokemon = this.pokemonRepo.create(createPokemonDto);
+    return this.pokemonRepo.save(pokemon);
   }
 
   // findAll() {
@@ -39,11 +46,19 @@ export class PokemonsService {
     return pokemon;
   }
 
-  update(id: number, updatePokemonDto: UpdatePokemonDto) {
-    return `This action updates a #${id} pokemon`;
+  async update(id: number, updatePokemonDto: UpdatePokemonDto) {
+    const updateResult = await this.pokemonRepo.update(id, updatePokemonDto);
+    if (!updateResult.affected) {
+      throw new EntityNotFoundError(Pokemon, id);
+    }
+
+    return this.pokemonRepo.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} pokemon`;
+  async remove(id: number) {
+    const deleteResult = await this.pokemonRepo.delete(id);
+    if (!deleteResult.affected) {
+      throw new EntityNotFoundError(Pokemon, id);
+    }
   }
 }
