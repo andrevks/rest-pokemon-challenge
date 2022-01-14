@@ -15,8 +15,18 @@ export class PokemonsService {
     return 'This action adds a new pokemon';
   }
 
-  findAll() {
-    return `This action returns all pokemons`;
+  // findAll() {
+  //   return `This action returns all pokemons`;
+  // }
+
+  async findByFilter(offset: number) {
+    const url = `https://pokeapi.co/api/v2/pokemon?limit=10&offset=${offset}`;
+    const pokemons = await this.httpService.get(url).pipe(
+      map((axiosResponse: AxiosResponse) => {
+        return axiosResponse.data.results;
+      }),
+    );
+    return pokemons;
   }
 
   async findOne(id: number) {

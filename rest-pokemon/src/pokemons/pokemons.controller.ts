@@ -21,9 +21,14 @@ export class PokemonsController {
     return this.pokemonsService.create(createPokemonDto);
   }
 
+  // @Get()
+  // findAll(@Query('limit') limit: number, @Query('offset') offset: number) {
+  //   return this.pokemonsService.findAll();
+  // }
+
   @Get()
-  findAll() {
-    return this.pokemonsService.findAll();
+  findByFilter(@Query('offset') offset: number) {
+    return this.pokemonsService.findByFilter(offset);
   }
 
   @Get(':id')
