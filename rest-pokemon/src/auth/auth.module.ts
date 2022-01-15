@@ -15,7 +15,7 @@ import { JwtStrategy } from './jwt.strategy';
     }),
     JwtModule.register({
       secret: 'my-api-password-secret',
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '1200s' },
     }),
     UsersModule,
   ],
