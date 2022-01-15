@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   HttpCode,
+  ValidationPipe,
 } from '@nestjs/common';
 import { PokemonsService } from './pokemons.service';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
@@ -19,7 +20,10 @@ export class PokemonsController {
   constructor(private readonly pokemonsService: PokemonsService) {}
 
   @Post()
-  create(@Body() createPokemonDto: CreatePokemonDto) {
+  create(
+    @Body(new ValidationPipe({ errorHttpStatusCode: 422 }))
+    createPokemonDto: CreatePokemonDto,
+  ) {
     return this.pokemonsService.create(createPokemonDto);
   }
 
@@ -39,7 +43,11 @@ export class PokemonsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePokemonDto: UpdatePokemonDto) {
+  update(
+    @Param('id') id: string,
+    @Body(new ValidationPipe({ errorHttpStatusCode: 422 }))
+    updatePokemonDto: UpdatePokemonDto,
+  ) {
     return this.pokemonsService.update(+id, updatePokemonDto);
   }
 
